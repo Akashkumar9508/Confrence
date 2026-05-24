@@ -314,14 +314,22 @@ export default function Home() {
                 className="p-2.5 bg-white rounded-xl shadow-inner border border-slate-200/60 my-4 flex items-center justify-center cursor-zoom-in hover:scale-[1.03] transition-transform active:scale-[0.97]"
                 title="Click to view full screen"
               >
-                <QRCodeCanvas
-                  value={upiPayUrl}
-                  size={180}
-                  bgColor={"#ffffff"}
-                  fgColor={"#047857"}
-                  level={"H"}
-                  includeMargin={true}
-                />
+                {conferenceData.bankDetails.upiQrImage ? (
+                  <img
+                    src={conferenceData.bankDetails.upiQrImage}
+                    alt="UPI QR Code"
+                    className="w-[180px] h-[180px] object-contain rounded-lg"
+                  />
+                ) : (
+                  <QRCodeCanvas
+                    value={upiPayUrl}
+                    size={180}
+                    bgColor={"#ffffff"}
+                    fgColor={"#047857"}
+                    level={"H"}
+                    includeMargin={true}
+                  />
+                )}
               </div>
               <span className="text-[10px] text-green-700 font-bold bg-green-50 px-2 py-1 rounded">
                 UPI ID: {conferenceData.bankDetails.upiId}
@@ -456,14 +464,22 @@ export default function Home() {
               </div>
 
               <div className="p-4 bg-white rounded-2xl border border-slate-100 shadow-inner flex items-center justify-center my-4">
-                <QRCodeCanvas
-                  value={activeModalQr === 'register' ? conferenceData.googleFormLink : upiPayUrl}
-                  size={260}
-                  bgColor={"#ffffff"}
-                  fgColor={activeModalQr === 'register' ? "#1e1b4b" : "#047857"}
-                  level={"H"}
-                  includeMargin={true}
-                />
+                {activeModalQr === 'payment' && conferenceData.bankDetails.upiQrImage ? (
+                  <img
+                    src={conferenceData.bankDetails.upiQrImage}
+                    alt="UPI QR Code Fullscreen"
+                    className="w-[260px] h-[260px] object-contain rounded-lg"
+                  />
+                ) : (
+                  <QRCodeCanvas
+                    value={activeModalQr === 'register' ? conferenceData.googleFormLink : upiPayUrl}
+                    size={260}
+                    bgColor={"#ffffff"}
+                    fgColor={activeModalQr === 'register' ? "#1e1b4b" : "#047857"}
+                    level={"H"}
+                    includeMargin={true}
+                  />
+                )}
               </div>
 
               <p className="text-[11px] text-slate-500 text-center leading-relaxed">

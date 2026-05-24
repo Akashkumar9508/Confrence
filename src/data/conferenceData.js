@@ -37,7 +37,8 @@ export const conferenceData = {
     ifscCode: "ICIC0005571",
     bankName: "ICICI Bank",
     branch: "New Baradwari, Jamshedpur",
-    upiId: "557101000113@icici" // UPI alias mapped to account
+    upiId: "9508369383@upi", // UPI alias mapped to account
+    upiQrImage: "/upi-qr.jpeg" // Path to the static UPI QR image
   },
 
   // National Office Bearers 2026 (top row in image)
