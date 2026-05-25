@@ -53,7 +53,8 @@ export default function Navbar() {
 
   const navLinks = [
     { label: 'Home', action: () => window.scrollTo({ top: 0, behavior: 'smooth' }) },
-    { label: 'Organising Committee', action: () => handleNavClick('committee') },
+    { label: 'Invitation', action: () => handleNavClick('invitation') },
+    { label: 'Sponsorship & Tariff', action: () => handleNavClick('sponsorship') },
     { label: 'Fees & Payments', action: () => handleNavClick('registration') },
     { label: 'FAQ & Venue', action: () => handleNavClick('faq') },
   ];
@@ -69,14 +70,14 @@ export default function Navbar() {
           {/* Logo Brand */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-accent-400 flex items-center justify-center text-white font-bold text-lg shadow-lg group-hover:scale-105 transition-transform">
-              P
+              E
             </div>
             <div>
               <span className="font-display font-extrabold text-lg sm:text-xl tracking-tight bg-gradient-to-r from-brand-600 via-brand-500 to-accent-500 bg-clip-text text-transparent dark:from-brand-300 dark:via-brand-400 dark:to-accent-300">
-                Pedicon 2026
+                EZPRC 2026
               </span>
               <span className="hidden sm:block text-[10px] text-slate-500 dark:text-slate-400 font-medium">
-                25th Jharkhand State & 29th Jamshedpur IAP
+                3rd East Zone Paediatric Rheumatology Conference
               </span>
             </div>
           </Link>

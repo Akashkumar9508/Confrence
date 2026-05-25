@@ -28,18 +28,15 @@ export default function Footer() {
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
               <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-brand-600 to-accent-400 flex items-center justify-center text-white font-bold text-base shadow-md">
-                P
+                E
               </div>
               <span className="font-display font-extrabold text-lg tracking-tight text-white">
-                Pedicon 2026
+                EZPRC 2026
               </span>
             </Link>
             <p className="text-slate-400 text-sm leading-relaxed">
-              The 25th Jharkhand State Pedicon & 29th Annual Conference of IAP Jamshedpur is the premier platform for pediatric advancements, child health guidelines, and clinical discussions.
+              The 3rd East Zone Paediatric Rheumatology Conference (EZPRC 2026) is the premier regional scientific event bringing the complexities of paediatric rheumatic and immunodeficiency diseases to Ranchi, Jharkhand.
             </p>
-            <div className="flex items-center gap-2 text-xs text-brand-400 font-semibold bg-brand-950/40 border border-brand-900/30 px-3 py-1.5 rounded-lg w-max">
-              <FiCheckCircle /> 200+ Concurrent Visitors Ready
-            </div>
           </div>
 
           {/* Col 2: Quick Links */}
@@ -49,58 +46,58 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3 text-sm">
               <li>
-                <button onClick={() => navigate('/')} className="hover:text-brand-400 transition-colors flex items-center gap-1.5 cursor-pointer">
+                <button onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="hover:text-brand-400 transition-colors flex items-center gap-1.5 cursor-pointer">
                   <FiArrowRight size={14} className="text-slate-500" /> Home
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNavClick('about')} className="hover:text-brand-400 transition-colors flex items-center gap-1.5 cursor-pointer">
-                  <FiArrowRight size={14} className="text-slate-500" /> About Conference
+                <button onClick={() => handleNavClick('invitation')} className="hover:text-brand-400 transition-colors flex items-center gap-1.5 cursor-pointer">
+                  <FiArrowRight size={14} className="text-slate-500" /> Invitation Letter
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNavClick('speakers')} className="hover:text-brand-400 transition-colors flex items-center gap-1.5 cursor-pointer">
-                  <FiArrowRight size={14} className="text-slate-500" /> Guest Speakers
+                <button onClick={() => handleNavClick('sponsorship')} className="hover:text-brand-400 transition-colors flex items-center gap-1.5 cursor-pointer">
+                  <FiArrowRight size={14} className="text-slate-500" /> Sponsorship & Tariff
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNavClick('schedule')} className="hover:text-brand-400 transition-colors flex items-center gap-1.5 cursor-pointer">
-                  <FiArrowRight size={14} className="text-slate-500" /> Scientific Schedule
+                <button onClick={() => handleNavClick('registration')} className="hover:text-brand-400 transition-colors flex items-center gap-1.5 cursor-pointer">
+                  <FiArrowRight size={14} className="text-slate-500" /> Fees & Payments
                 </button>
               </li>
               <li>
-                <button onClick={() => handleNavClick('sponsors')} className="hover:text-brand-400 transition-colors flex items-center gap-1.5 cursor-pointer">
-                  <FiArrowRight size={14} className="text-slate-500" /> Our Sponsors
+                <button onClick={() => handleNavClick('faq')} className="hover:text-brand-400 transition-colors flex items-center gap-1.5 cursor-pointer">
+                  <FiArrowRight size={14} className="text-slate-500" /> FAQ & Venue
                 </button>
               </li>
             </ul>
           </div>
 
-          {/* Col 3: Registration Link */}
+          {/* Col 3: Sponsorship Info */}
           <div>
             <h3 className="font-display font-bold text-white text-base mb-6 relative after:content-[''] after:absolute after:bottom-[-6px] after:left-0 after:w-8 after:h-[2px] after:bg-brand-500">
-              Registration Info
+              Sponsorship Packages
             </h3>
             <ul className="space-y-3 text-sm">
               <li>
-                <Link to="/conference/jharkhand-pedicon-2026" className="hover:text-brand-400 transition-colors flex items-center gap-1.5">
-                  <FiArrowRight size={14} className="text-slate-500" /> Delegate Fees (₹4,000)
-                </Link>
+                <button onClick={() => handleNavClick('sponsorship')} className="hover:text-brand-400 text-left transition-colors flex items-center gap-1.5 cursor-pointer">
+                  <FiArrowRight size={14} className="text-slate-500" /> Platinum Sponsor (₹8,00,000)
+                </button>
               </li>
               <li>
-                <Link to="/conference/jharkhand-pedicon-2026" className="hover:text-brand-400 transition-colors flex items-center gap-1.5">
-                  <FiArrowRight size={14} className="text-slate-500" /> PG Student Fees (₹2,000)
-                </Link>
+                <button onClick={() => handleNavClick('sponsorship')} className="hover:text-brand-400 text-left transition-colors flex items-center gap-1.5 cursor-pointer">
+                  <FiArrowRight size={14} className="text-slate-500" /> Diamond Sponsor (₹5,00,000)
+                </button>
               </li>
               <li>
-                <Link to="/conference/jharkhand-pedicon-2026" className="hover:text-brand-400 transition-colors flex items-center gap-1.5">
-                  <FiArrowRight size={14} className="text-slate-500" /> Accompanying Person (₹3,000)
-                </Link>
+                <button onClick={() => handleNavClick('sponsorship')} className="hover:text-brand-400 text-left transition-colors flex items-center gap-1.5 cursor-pointer">
+                  <FiArrowRight size={14} className="text-slate-500" /> Gold Sponsor (₹3,00,000)
+                </button>
               </li>
               <li>
-                <Link to="/conference/jharkhand-pedicon-2026" className="hover:text-brand-400 transition-colors flex items-center gap-1.5">
-                  <FiArrowRight size={14} className="text-slate-500" /> Senior Citizens (Complimentary)
-                </Link>
+                <button onClick={() => handleNavClick('sponsorship')} className="hover:text-brand-400 text-left transition-colors flex items-center gap-1.5 cursor-pointer">
+                  <FiArrowRight size={14} className="text-slate-500" /> Premium Stall (₹2,00,000)
+                </button>
               </li>
             </ul>
           </div>
@@ -114,14 +111,14 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <FiMapPin className="text-brand-400 mt-1 shrink-0" size={16} />
                 <span>
-                  <strong>Hotel Ramada, Jamshedpur</strong><br />
-                  3, Ram Das Rd, Bistupur, Jamshedpur, Jharkhand 831001
+                  <strong>The Royal Retreat, Ranchi</strong><br />
+                  Ramgarh Rd, Krishna Nagar, Sainik Colony, Ranchi, Jharkhand 834012
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <FiPhone className="text-brand-400 shrink-0" size={16} />
                 <a href={`tel:${conferenceData.contactNumber}`} className="hover:text-white transition-colors">
-                  {conferenceData.contactNumber}
+                  +91 {conferenceData.contactNumber}
                 </a>
               </li>
               <li className="flex items-center gap-3">
@@ -137,7 +134,7 @@ export default function Footer() {
 
         {/* Bottom divider and copyright */}
         <div className="border-t border-slate-800/80 pt-8 mt-8 flex flex-col md:flex-row items-center justify-between text-xs text-slate-500 dark:border-darkbg-border/60">
-          <p>© {new Date().getFullYear()} IAP Jamshedpur. All Rights Reserved. Designed for Pediatricians & Residents.</p>
+          <p>© {new Date().getFullYear()} IAP Ranchi District Branch. All Rights Reserved. Designed for Pediatricians & Residents.</p>
           <div className="flex gap-4 mt-4 md:mt-0">
             <span className="hover:text-slate-300 transition-colors">Jharkhand Pediatric Association</span>
             <span>•</span>

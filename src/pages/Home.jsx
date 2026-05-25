@@ -1,8 +1,24 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { FiCalendar, FiMapPin, FiPhone, FiMail, FiDownload, FiCheckCircle, FiInfo, FiChevronRight, FiExternalLink, FiX } from 'react-icons/fi';
-import { FaGraduationCap, FaUserFriends, FaGlobe, FaQrcode } from 'react-icons/fa';
+import { 
+  FiCalendar, 
+  FiMapPin, 
+  FiPhone, 
+  FiMail, 
+  FiInfo, 
+  FiChevronRight, 
+  FiCheckCircle, 
+  FiCopy, 
+  FiAward, 
+  FiTrendingUp, 
+  FiStar, 
+  FiUser, 
+  FiBriefcase,
+  FiExternalLink,
+  FiX
+} from 'react-icons/fi';
+import { FaWhatsapp, FaUniversity } from 'react-icons/fa';
 import { QRCodeCanvas } from 'qrcode.react';
 import { conferenceData } from '../data/conferenceData';
 import CountdownTimer from '../components/CountdownTimer';
@@ -10,236 +26,403 @@ import CountdownTimer from '../components/CountdownTimer';
 export default function Home() {
   const navigate = useNavigate();
   const [activeFaq, setActiveFaq] = useState(null);
+  const [activeTab, setActiveTab] = useState('sponsorship'); // 'sponsorship' | 'advertisement'
+  const [copiedField, setCopiedField] = useState(null);
   const [activeModalQr, setActiveModalQr] = useState(null);
-  const [inquirySubmitted, setInquirySubmitted] = useState(false);
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  
-  // UPI Pay Link generator: opens UPI apps on mobile with preset parameters
-  const upiPayUrl = `upi://pay?pa=${conferenceData.bankDetails.upiId}&pn=${encodeURIComponent(conferenceData.bankDetails.accountName)}&am=4000.00&cu=INR&tn=Pedicon2026`;
+
+  const upiPayUrl = `upi://pay?pa=${conferenceData.bankDetails.upiId}&pn=${encodeURIComponent(conferenceData.bankDetails.accountName)}&am=4000.00&cu=INR&tn=EZPRC2026`;
+
+  const handleCopy = (text, fieldName) => {
+    navigator.clipboard.writeText(text);
+    setCopiedField(fieldName);
+    setTimeout(() => setCopiedField(null), 2000);
+  };
 
   const handleRegisterClick = () => {
-    // Open Google Form in new tab
     window.open(conferenceData.googleFormLink, '_blank');
   };
 
+  const handleWhatsAppInquiry = () => {
+    const message = `Hi, I am interested in sponsoring/advertising at the 3rd East Zone Paediatric Rheumatology Conference (EZPRC 2026). Please share more details.`;
+    const cleanNumber = conferenceData.contactNumber.replace(/[^\d+]/g, '');
+    window.open(`https://wa.me/91${cleanNumber}?text=${encodeURIComponent(message)}`, '_blank');
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 pb-20">
+    <div className="min-h-screen bg-slate-50 text-slate-800 pb-20 dark:bg-darkbg dark:text-slate-100 transition-colors duration-300">
       
-      {/* ==================================================
-          1. TOP PANEL: NATIONAL IAP OFFICE BEARERS
-          ================================================== */}
-      <section className="bg-gradient-to-r from-slate-900 to-indigo-950 text-white py-6 border-b-4 border-amber-500">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p className="text-[10px] sm:text-xs font-bold text-amber-400 tracking-widest uppercase mb-4">
-            Indian Academy of Pediatrics - National Office Bearers 2026
-          </p>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {conferenceData.officeBearers.map((bearer, idx) => (
-              <div key={idx} className="flex flex-col items-center space-y-1">
-                <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-amber-400 bg-slate-800 shadow-md">
-                  <img
-                    src={bearer.image}
-                    alt={bearer.name}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-                <h5 className="font-display font-extrabold text-[10px] tracking-tight leading-tight text-amber-200 uppercase">
-                  {bearer.name}
-                </h5>
-                <p className="text-[8px] text-slate-350 tracking-wider font-semibold">
-                  {bearer.role}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* Background Blobs for Visual depth */}
+      <div className="absolute top-20 left-1/4 w-96 h-96 bg-blob-purple opacity-30 pointer-events-none" />
+      <div className="absolute top-40 right-1/4 w-96 h-96 bg-blob-cyan opacity-30 pointer-events-none" />
 
       {/* ==================================================
-          2. MAIN BANNER & HEADLINE
+          1. HERO HEADER
           ================================================== */}
-      <header className="relative py-14 px-4 text-center overflow-hidden bg-gradient-to-b from-indigo-50/50 to-transparent">
-        <div className="max-w-6xl mx-auto space-y-4 relative z-10">
+      <header className="relative py-16 px-4 text-center overflow-hidden bg-gradient-to-b from-indigo-50/50 to-transparent dark:from-brand-950/20">
+        <div className="max-w-6xl mx-auto space-y-6 relative z-10">
           
-          {/* Main Titles */}
-          <h1 className="font-display font-black text-3xl sm:text-5xl lg:text-6xl text-indigo-950 leading-none tracking-tight">
-            25<sup>th</sup> JHARKHAND STATE PEDICON
-          </h1>
-          <p className="font-display font-black text-xl sm:text-3xl text-indigo-900 tracking-tight">
-            & 29<sup>th</sup> Annual Conference IAP Jamshedpur
-          </p>
-          <p className="text-xs sm:text-sm font-bold text-slate-500 max-w-xl mx-auto uppercase tracking-wide">
-            (Organised by Indian Academy of Pediatrics, Jamshedpur Branch)
+          {/* Highlight Badge */}
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="inline-block"
+          >
+            <span className="bg-brand-100 text-brand-700 dark:bg-brand-950/50 dark:text-brand-300 text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full border border-brand-200/50 dark:border-brand-900/30 uppercase tracking-widest shadow-sm">
+              {conferenceData.subtitle}
+            </span>
+          </motion.div>
+
+          {/* Main Title & Theme */}
+          <motion.h1
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className="font-display font-black text-3xl sm:text-5xl lg:text-6xl text-indigo-950 dark:text-white leading-tight tracking-tight max-w-4xl mx-auto"
+          >
+            {conferenceData.title}
+          </motion.h1>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="max-w-2xl mx-auto"
+          >
+            <p className="text-slate-500 dark:text-slate-455 text-xs sm:text-sm uppercase font-bold tracking-wider mb-2">
+              Conference Theme
+            </p>
+            <p className="font-display font-extrabold text-lg sm:text-2xl text-brand-600 dark:text-accent-400 bg-brand-50/50 dark:bg-brand-950/25 py-2 px-4 rounded-xl border border-brand-100/50 dark:border-brand-900/20 inline-block shadow-inner">
+              "{conferenceData.theme}"
+            </p>
+          </motion.div>
+
+          <p className="text-xs sm:text-sm font-semibold text-slate-500 dark:text-slate-400 max-w-xl mx-auto uppercase tracking-wide">
+            Organised by: {conferenceData.organisedBy}
           </p>
 
-          {/* Dates & Venue Cards */}
-          <div className="max-w-4xl mx-auto bg-white border border-indigo-100 shadow-xl rounded-3xl p-6 sm:p-8 mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-            
-            {/* Left: IAP Logo Representation */}
-            <div className="flex flex-col items-center space-y-1 md:border-r border-slate-100 pb-4 md:pb-0">
-              <div className="w-16 h-16 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 border border-indigo-150">
-                <span className="font-display font-black text-xs text-center leading-none">IAP<br/>JSR</span>
+          {/* Dates & Venue Details Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="max-w-4xl mx-auto bg-white dark:bg-darkbg-card border border-indigo-150/40 dark:border-darkbg-border shadow-xl rounded-3xl p-6 sm:p-8 mt-10 grid grid-cols-1 md:grid-cols-3 gap-6 items-center"
+          >
+            {/* Left: EZPRC Logo / Badge */}
+            <div className="flex flex-col items-center space-y-1 md:border-r border-slate-100 dark:border-slate-800 pb-4 md:pb-0">
+              <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-brand-950/60 flex items-center justify-center text-brand-600 dark:text-accent-300 border border-indigo-100 dark:border-brand-900/30">
+                <span className="font-display font-black text-sm text-center leading-none">EZPRC<br/>2026</span>
               </div>
-              <p className="text-[9px] font-bold text-slate-400 tracking-widest uppercase mt-2">Est. Branch</p>
+              <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 tracking-widest uppercase mt-2">Ranchi, JH</p>
             </div>
 
-            {/* Middle: Event Callout */}
-            <div className="space-y-2 md:col-span-1 border-b md:border-b-0 md:border-r border-slate-100 pb-4 md:pb-0">
-              <div className="flex items-center justify-center gap-1.5 text-indigo-700">
-                <FiCalendar className="shrink-0" size={18} />
+            {/* Middle: Event Dates */}
+            <div className="space-y-2 md:col-span-1 border-b md:border-b-0 md:border-r border-slate-100 dark:border-slate-800 pb-4 md:pb-0">
+              <div className="flex items-center justify-center gap-2 text-indigo-700 dark:text-brand-300">
+                <FiCalendar className="shrink-0 text-brand-550 dark:text-accent-400" size={20} />
                 <span className="font-display font-black text-base sm:text-lg tracking-tight">
-                  12th & 13th Dec 2026
+                  {conferenceData.dates}
                 </span>
               </div>
-              <p className="text-[10px] text-amber-600 font-bold bg-amber-50 px-2 py-1 rounded-md inline-block">
-                Pre-Conf Workshop: 11th Dec 2026
-              </p>
+              <span className="text-[10px] text-amber-600 dark:text-amber-400 font-bold bg-amber-50 dark:bg-amber-950/30 px-3 py-1 rounded-full inline-block">
+                Mark Your Calendar
+              </span>
             </div>
 
-            {/* Right: Venue Callout */}
+            {/* Right: Venue */}
             <div className="space-y-1">
-              <div className="flex items-center justify-center gap-1.5 text-indigo-950">
-                <FiMapPin className="shrink-0 text-red-500" size={18} />
+              <div className="flex items-center justify-center gap-2 text-indigo-950 dark:text-white">
+                <FiMapPin className="shrink-0 text-red-500 dark:text-red-400" size={20} />
                 <span className="font-display font-extrabold text-sm sm:text-base uppercase tracking-tight">
-                  Hotel Ramada, Jamshedpur
+                  {conferenceData.venue.name}
                 </span>
               </div>
-              <p className="text-[10px] text-slate-400">Bistupur Commercial Hub, Jamshedpur</p>
+              <p className="text-[10px] text-slate-400 dark:text-slate-500">Ranchi, Jharkhand</p>
             </div>
-
-          </div>
+          </motion.div>
 
           {/* Countdown Wrapper */}
           <div className="max-w-2xl mx-auto pt-6">
-            <CountdownTimer targetDate="2026-12-12T09:00:00" />
+            <CountdownTimer targetDate="2026-10-31T09:00:00" />
           </div>
 
         </div>
       </header>
 
       {/* ==================================================
-          3. ORGANISING COMMITTEE SECTION
+          2. ELEGANT INVITATION LETTER
           ================================================== */}
-      <section id="committee" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="text-center mb-10">
-          <h2 className="font-display font-black text-2xl sm:text-3xl text-indigo-950 uppercase tracking-tight relative inline-block after:content-[''] after:absolute after:bottom-[-8px] after:left-1/4 after:w-1/2 after:h-[3px] after:bg-indigo-600">
-            ORGANISING COMMITTEE
-          </h2>
-        </div>
+      <section id="invitation" className="max-w-4xl mx-auto px-4 sm:px-6 py-12 relative z-10">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          className="bg-white dark:bg-darkbg-card border border-slate-200/80 dark:border-darkbg-border shadow-lg rounded-3xl p-6 sm:p-12 relative overflow-hidden"
+        >
+          {/* Subtle design element */}
+          <div className="absolute top-0 left-0 w-2 h-full bg-brand-500" />
+          
+          <div className="space-y-6">
+            {/* Salutation */}
+            <h3 className="font-display font-extrabold text-lg sm:text-xl text-indigo-950 dark:text-white">
+              Dear Colleagues, Mentors, and Friends in Paediatrics,
+            </h3>
+            
+            {/* Letter Body */}
+            <p className="text-slate-650 dark:text-slate-300 text-sm sm:text-base leading-relaxed text-justify">
+              {conferenceData.description}
+            </p>
 
-        {/* 10 members Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-6 max-w-6xl mx-auto">
-          {conferenceData.organisingCommittee.map((member, idx) => (
-            <div 
-              key={idx} 
-              className="bg-white border border-slate-200/80 rounded-2xl p-4 flex flex-col items-center text-center shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-indigo-100 bg-slate-50 mb-3 shadow-inner">
-                <img
-                  src={member.image}
-                  alt={member.name}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
-              </div>
-              <h4 className="font-display font-extrabold text-xs text-indigo-950 uppercase leading-snug">
-                {member.name}
+            {/* Why You Should Be There */}
+            <div className="pt-6 border-t border-slate-100 dark:border-slate-800">
+              <h4 className="font-display font-black text-sm sm:text-base text-slate-900 dark:text-white uppercase tracking-wider mb-4 flex items-center gap-2">
+                <FiAward className="text-brand-500" /> Why You Should Be There:
               </h4>
-              <p className="text-[9px] text-indigo-600 font-bold uppercase mt-1 tracking-wider">
-                {member.role}
-              </p>
-              {member.detail && (
-                <p className="text-[8px] text-slate-400 font-semibold uppercase">
-                  {member.detail}
-                </p>
-              )}
-            </div>
-          ))}
-        </div>
 
-        {/* Chief Contacts Grid (Sunil K Singh & Shikhar Deep Jain) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mt-12 pt-10 border-t border-slate-200/60">
-          {conferenceData.chiefContacts.map((chief, idx) => (
-            <div 
-              key={idx}
-              className="bg-white border border-indigo-100/80 rounded-3xl p-5 flex items-center gap-5 shadow-sm hover:shadow-md transition-shadow"
-            >
-              <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-indigo-200 bg-slate-50 shrink-0 shadow-md">
-                <img
-                  src={chief.image}
-                  alt={chief.name}
-                  className="w-full h-full object-cover"
-                  loading="lazy"
-                />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {conferenceData.whyAttend.map((item, idx) => (
+                  <div 
+                    key={idx} 
+                    className="p-4 bg-slate-50 dark:bg-brand-950/20 border border-slate-200/60 dark:border-brand-900/10 rounded-2xl flex items-start gap-3 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-0.5"
+                  >
+                    <div className="w-6 h-6 rounded-full bg-brand-50 dark:bg-brand-900/30 flex items-center justify-center shrink-0 mt-0.5">
+                      <FiCheckCircle className="text-brand-600 dark:text-accent-400" size={14} />
+                    </div>
+                    <div>
+                      <h5 className="font-bold text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-tight mb-1">
+                        {item.title}
+                      </h5>
+                      <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400 leading-normal">
+                        {item.detail}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className="space-y-1.5">
-                <h4 className="font-display font-black text-sm sm:text-base text-indigo-950 uppercase leading-tight">
-                  {chief.name}
-                </h4>
-                <p className="text-xs text-indigo-700 font-bold uppercase tracking-wider leading-none">
-                  {chief.role}
-                </p>
-                <div className="flex flex-col pt-1.5 gap-1 text-xs">
-                  <a href={`tel:${chief.contact}`} className="font-bold text-slate-600 hover:text-indigo-600 flex items-center gap-1.5">
-                    <FiPhone className="text-indigo-500 shrink-0" /> {chief.contact}
-                  </a>
+            </div>
+
+            <p className="text-slate-600 dark:text-slate-350 text-sm sm:text-base leading-relaxed text-justify pt-2">
+              {conferenceData.invitationClosing}
+            </p>
+
+            {/* Letter Footer (Dr. Neha Singh Card) */}
+            <div className="pt-8 mt-8 border-t border-slate-100 dark:border-slate-800 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6">
+              
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-brand-400 bg-slate-800 shrink-0 shadow-md">
+                  <img
+                    src={conferenceData.organisingCommittee[0].image}
+                    alt={conferenceData.organisingCommittee[0].name}
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <div>
+                  <h5 className="font-display font-extrabold text-sm sm:text-base text-indigo-950 dark:text-white uppercase leading-none">
+                    {conferenceData.organisingCommittee[0].name}
+                  </h5>
+                  <p className="text-[10px] text-brand-600 dark:text-accent-400 font-bold uppercase tracking-wider mt-1.5 leading-none">
+                    {conferenceData.organisingCommittee[0].role}
+                  </p>
+                  <p className="text-[9px] text-slate-400 dark:text-slate-500 mt-1 uppercase font-semibold">
+                    EZPRC 2026 Organising Secretary
+                  </p>
                 </div>
               </div>
+
+              {/* Call / Contact details */}
+              <div className="flex flex-col gap-2 shrink-0 bg-slate-50 dark:bg-brand-950/30 border border-slate-150 dark:border-brand-900/20 p-4 rounded-2xl w-full sm:w-auto">
+                <span className="text-[9px] text-slate-500 dark:text-slate-400 uppercase tracking-widest font-extrabold block">Organising Secretariat</span>
+                <a 
+                  href={`tel:${conferenceData.contactNumber}`} 
+                  className="flex items-center gap-2 font-display font-black text-sm text-indigo-950 dark:text-white hover:text-brand-500 transition-colors"
+                >
+                  <FiPhone className="text-brand-500" /> +91 {conferenceData.contactNumber}
+                </a>
+                <button
+                  onClick={handleWhatsAppInquiry}
+                  className="flex items-center justify-center gap-1.5 px-3 py-1.5 bg-green-500 hover:bg-green-600 text-white text-xs font-bold rounded-xl transition-all cursor-pointer border-none shadow-sm"
+                >
+                  <FaWhatsapp size={14} /> Contact on WhatsApp
+                </button>
+              </div>
+
             </div>
-          ))}
-        </div>
+
+          </div>
+        </motion.div>
       </section>
 
       {/* ==================================================
-          4. REGISTRATION DETAILS & PAYMENT HUBS (Poster footer)
+          3. SPONSORSHIP & ADVERTISING RATES (interactive tabs)
           ================================================== */}
-      <section id="registration" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <section id="sponsorship" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        
+        <div className="text-center mb-10 space-y-2">
+          <span className="text-brand-600 dark:text-accent-400 text-xs sm:text-sm font-bold uppercase tracking-widest">
+            Sponsorship Opportunities
+          </span>
+          <h2 className="font-display font-black text-2xl sm:text-4xl text-indigo-950 dark:text-white uppercase tracking-tight">
+            Sponsorship & Souvenir Tariff
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-xl mx-auto">
+            Review sponsorship options and souvenir advertisement slots available for corporate partners and contributors.
+          </p>
+        </div>
+
+        {/* Tab Controls */}
+        <div className="flex justify-center mb-8">
+          <div className="p-1 bg-slate-200/60 dark:bg-darkbg-card rounded-2xl border border-slate-300/40 dark:border-darkbg-border flex gap-1 shadow-inner">
+            <button
+              onClick={() => setActiveTab('sponsorship')}
+              className={`px-5 py-2.5 rounded-xl font-display font-extrabold text-xs sm:text-sm transition-all duration-200 cursor-pointer border-none ${
+                activeTab === 'sponsorship'
+                  ? 'bg-white dark:bg-brand-600 text-brand-900 dark:text-white shadow-md'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+              }`}
+            >
+              Sponsorship Tariff
+            </button>
+            <button
+              onClick={() => setActiveTab('advertisement')}
+              className={`px-5 py-2.5 rounded-xl font-display font-extrabold text-xs sm:text-sm transition-all duration-200 cursor-pointer border-none ${
+                activeTab === 'advertisement'
+                  ? 'bg-white dark:bg-brand-600 text-brand-900 dark:text-white shadow-md'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+              }`}
+            >
+              Souvenir Advertisement
+            </button>
+          </div>
+        </div>
+
+        {/* Tab Contents */}
+        <AnimatePresence mode="wait">
+          {activeTab === 'sponsorship' ? (
+            <motion.div
+              key="sponsorship-tab"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.25 }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 max-w-7xl mx-auto"
+            >
+              {conferenceData.sponsorshipTariff.map((item) => (
+                <div 
+                  key={item.id} 
+                  className="bg-white dark:bg-darkbg-card border border-slate-200/80 dark:border-darkbg-border rounded-2xl p-5 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group hover:border-brand-300 dark:hover:border-brand-800"
+                >
+                  <div className="space-y-3">
+                    <div className="w-10 h-10 rounded-xl bg-brand-50 dark:bg-brand-950/60 flex items-center justify-center text-brand-600 dark:text-accent-400">
+                      {item.sector.includes("Sponsor") ? <FiStar size={20} /> : <FiBriefcase size={20} />}
+                    </div>
+                    <h4 className="font-display font-black text-xs sm:text-sm text-indigo-950 dark:text-white uppercase leading-snug">
+                      {item.sector}
+                    </h4>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-slate-50 dark:border-slate-800/80">
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-semibold uppercase tracking-wider mb-0.5">Amount</span>
+                    <strong className="text-brand-600 dark:text-accent-400 font-display font-black text-base">
+                      {item.amount}
+                    </strong>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              key="advertisement-tab"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15 }}
+              transition={{ duration: 0.25 }}
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto"
+            >
+              {conferenceData.souvenirAdvertisement.map((item) => (
+                <div 
+                  key={item.id} 
+                  className="bg-white dark:bg-darkbg-card border border-slate-200/80 dark:border-darkbg-border rounded-2xl p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow group hover:border-brand-300 dark:hover:border-brand-800"
+                >
+                  <div className="space-y-3">
+                    <div className="w-10 h-10 rounded-xl bg-accent-50 dark:bg-brand-950/60 flex items-center justify-center text-accent-600 dark:text-accent-400">
+                      <FiTrendingUp size={20} />
+                    </div>
+                    <h4 className="font-display font-black text-sm text-indigo-950 dark:text-white uppercase leading-snug">
+                      {item.item}
+                    </h4>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-slate-50 dark:border-slate-800/80">
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-semibold uppercase tracking-wider mb-0.5">Rate</span>
+                    <strong className="text-brand-600 dark:text-accent-400 font-display font-black text-base">
+                      {item.amount}
+                    </strong>
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* CTA for Sponsorship */}
+        <div className="mt-10 text-center">
+          <button
+            onClick={handleWhatsAppInquiry}
+            className="inline-flex items-center gap-2 px-6 py-3.5 bg-gradient-to-r from-brand-600 to-brand-500 hover:from-brand-700 hover:to-brand-600 text-white font-extrabold text-sm rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer border-none"
+          >
+            Inquire About Sponsorships <FiChevronRight />
+          </button>
+        </div>
+
+      </section>
+
+      {/* ==================================================
+          4. REGISTRATION HUBS & ACCOUNT DETAILS
+          ================================================== */}
+      <section id="registration" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto">
           
           {/* Left Column: Fees breakdown */}
-          <div className="lg:col-span-6 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-md flex flex-col justify-between">
+          <div className="lg:col-span-5 bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 shadow-md flex flex-col justify-between">
             <div className="space-y-6">
-              <h3 className="font-display font-black text-xl text-indigo-950 border-b border-slate-100 pb-3 uppercase tracking-tight">
+              <h3 className="font-display font-black text-xl text-indigo-950 dark:text-white border-b border-slate-100 dark:border-slate-800 pb-3 uppercase tracking-tight">
                 REGISTRATION FEES
               </h3>
               
               <ul className="space-y-4">
-                <li className="flex justify-between items-start gap-4 border-b border-slate-50 pb-3">
+                <li className="flex justify-between items-start gap-4 border-b border-slate-50 dark:border-slate-800 pb-3">
                   <div>
-                    <h4 className="font-bold text-sm text-slate-800">{conferenceData.registrationFees.delegate.label}</h4>
+                    <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200">{conferenceData.registrationFees.delegate.label}</h4>
                   </div>
-                  <strong className="text-indigo-700 font-display font-black text-base">{conferenceData.registrationFees.delegate.fee}</strong>
+                  <strong className="text-brand-600 dark:text-accent-400 font-display font-black text-base">{conferenceData.registrationFees.delegate.fee}</strong>
                 </li>
                 
-                <li className="flex justify-between items-start gap-4 border-b border-slate-50 pb-3">
+                <li className="flex justify-between items-start gap-4 border-b border-slate-50 dark:border-slate-800 pb-3">
                   <div>
-                    <h4 className="font-bold text-sm text-slate-800">{conferenceData.registrationFees.pgStudent.label}</h4>
-                    <p className="text-[10px] text-slate-400 mt-0.5">{conferenceData.registrationFees.pgStudent.note}</p>
+                    <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200">{conferenceData.registrationFees.pgStudent.label}</h4>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{conferenceData.registrationFees.pgStudent.note}</p>
                   </div>
-                  <strong className="text-indigo-700 font-display font-black text-base">{conferenceData.registrationFees.pgStudent.fee}</strong>
+                  <strong className="text-brand-600 dark:text-accent-400 font-display font-black text-base">{conferenceData.registrationFees.pgStudent.fee}</strong>
                 </li>
                 
-                <li className="flex justify-between items-start gap-4 border-b border-slate-50 pb-3">
+                <li className="flex justify-between items-start gap-4 border-b border-slate-50 dark:border-slate-800 pb-3">
                   <div>
-                    <h4 className="font-bold text-sm text-slate-800">{conferenceData.registrationFees.seniorCitizen.label}</h4>
-                    <p className="text-[10px] text-slate-400 mt-0.5">{conferenceData.registrationFees.seniorCitizen.note}</p>
+                    <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200">{conferenceData.registrationFees.seniorCitizen.label}</h4>
+                    <p className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{conferenceData.registrationFees.seniorCitizen.note}</p>
                   </div>
-                  <strong className="text-indigo-700 font-display font-black text-sm bg-indigo-50 px-2 py-0.5 rounded-md">{conferenceData.registrationFees.seniorCitizen.fee}</strong>
+                  <strong className="text-brand-600 dark:text-accent-450 font-display font-black text-sm bg-indigo-50 dark:bg-brand-950/40 px-2 py-0.5 rounded-md">{conferenceData.registrationFees.seniorCitizen.fee}</strong>
                 </li>
 
                 <li className="flex justify-between items-start gap-4">
                   <div>
-                    <h4 className="font-bold text-sm text-slate-800">{conferenceData.registrationFees.accompanying.label}</h4>
+                    <h4 className="font-bold text-sm text-slate-800 dark:text-slate-200">{conferenceData.registrationFees.accompanying.label}</h4>
                   </div>
-                  <strong className="text-indigo-700 font-display font-black text-base">{conferenceData.registrationFees.accompanying.fee}</strong>
+                  <strong className="text-brand-600 dark:text-accent-400 font-display font-black text-base">{conferenceData.registrationFees.accompanying.fee}</strong>
                 </li>
               </ul>
 
               {/* Special Accomodation Promo Box */}
-              <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-200 text-xs text-amber-850 leading-relaxed">
+              <div className="p-4 rounded-2xl bg-amber-50/70 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
                 <div className="flex gap-2 items-start">
-                  <FiInfo size={16} className="text-amber-600 shrink-0 mt-0.5" />
+                  <FiInfo size={16} className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                   <p>
                     <strong>Special Accommodation Offer:</strong> {conferenceData.registrationFees.specialOffer}
                   </p>
@@ -248,10 +431,10 @@ export default function Home() {
             </div>
 
             {/* Direct Form Trigger Button */}
-            <div className="pt-6 mt-6 border-t border-slate-100">
+            <div className="pt-6 mt-6 border-t border-slate-100 dark:border-slate-800">
               <button
                 onClick={handleRegisterClick}
-                className="w-full py-4 bg-indigo-650 hover:bg-indigo-700 text-white font-extrabold text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full py-4 bg-brand-600 hover:bg-brand-700 text-white font-extrabold text-sm rounded-2xl shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer border-none"
               >
                 Open Google Form Registration <FiChevronRight />
               </button>
@@ -269,92 +452,112 @@ export default function Home() {
           </div>
 
           {/* Right Column: QR Codes & Payments */}
-          <div className="lg:col-span-6 bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-md grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
+          <div className="lg:col-span-7 bg-white dark:bg-darkbg-card border border-slate-200 dark:border-darkbg-border rounded-3xl p-6 sm:p-8 shadow-md flex flex-col justify-between space-y-6">
             
-            {/* Left Box: Form Register QR */}
-            <div className="flex flex-col items-center text-center p-4 bg-slate-50 rounded-2xl border border-slate-100 h-full justify-between">
-              <div>
-                <span className="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded uppercase tracking-wider">
-                  Register Here
-                </span>
-                <p className="text-[10px] text-slate-450 mt-1 leading-normal">Scan to fill Google Form</p>
-              </div>
-              <div 
-                onClick={() => setActiveModalQr('register')}
-                className="p-2.5 bg-white rounded-xl shadow-inner border border-slate-200/60 my-4 flex items-center justify-center cursor-zoom-in hover:scale-[1.03] transition-transform active:scale-[0.97]"
-                title="Click to view full screen"
-              >
-                <QRCodeCanvas
-                  value={conferenceData.googleFormLink}
-                  size={180}
-                  bgColor={"#ffffff"}
-                  fgColor={"#1e1b4b"}
-                  level={"H"}
-                  includeMargin={true}
-                />
-              </div>
-              <button 
-                onClick={handleRegisterClick}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-lg cursor-pointer"
-              >
-                Register Online
-              </button>
-            </div>
-
-            {/* Right Box: Pay QR */}
-            <div className="flex flex-col items-center text-center p-4 bg-slate-50 rounded-2xl border border-slate-100 h-full justify-between">
-              <div>
-                <span className="text-[10px] bg-green-100 text-green-700 font-bold px-2 py-0.5 rounded uppercase tracking-wider">
-                  Scan Here to Pay
-                </span>
-                <p className="text-[10px] text-slate-450 mt-1 leading-normal">UPI Transfer (BHIM/GPay)</p>
-              </div>
-              <div 
-                onClick={() => setActiveModalQr('payment')}
-                className="p-2.5 bg-white rounded-xl shadow-inner border border-slate-200/60 my-4 flex items-center justify-center cursor-zoom-in hover:scale-[1.03] transition-transform active:scale-[0.97]"
-                title="Click to view full screen"
-              >
-                {conferenceData.bankDetails.upiQrImage ? (
-                  <img
-                    src={conferenceData.bankDetails.upiQrImage}
-                    alt="UPI QR Code"
-                    className="w-[180px] h-[180px] object-contain rounded-lg"
-                  />
-                ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
+              
+              {/* Left Box: Form Register QR */}
+              <div className="flex flex-col items-center text-center p-4 bg-slate-50 dark:bg-brand-950/20 rounded-2xl border border-slate-100 dark:border-brand-900/10 h-full justify-between">
+                <div>
+                  <span className="text-[10px] bg-indigo-100 dark:bg-brand-950/40 text-indigo-750 dark:text-brand-300 font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+                    Register Here
+                  </span>
+                  <p className="text-[10px] text-slate-450 dark:text-slate-500 mt-1 leading-normal">Scan to fill Google Form</p>
+                </div>
+                <div 
+                  onClick={() => setActiveModalQr('register')}
+                  className="p-2.5 bg-white rounded-xl shadow-inner border border-slate-200/60 dark:border-brand-900/20 my-4 flex items-center justify-center cursor-zoom-in hover:scale-[1.03] transition-transform active:scale-[0.97]"
+                  title="Click to view full screen"
+                >
                   <QRCodeCanvas
-                    value={upiPayUrl}
-                    size={180}
+                    value={conferenceData.googleFormLink}
+                    size={140}
                     bgColor={"#ffffff"}
-                    fgColor={"#047857"}
+                    fgColor={"#1e1b4b"}
                     level={"H"}
                     includeMargin={true}
                   />
-                )}
+                </div>
+                <button 
+                  onClick={handleRegisterClick}
+                  className="px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold rounded-lg cursor-pointer border-none"
+                >
+                  Register Online
+                </button>
               </div>
-              <span className="text-[10px] text-green-700 font-bold bg-green-50 px-2 py-1 rounded">
-                UPI ID: {conferenceData.bankDetails.upiId}
-              </span>
+
+              {/* Right Box: Pay QR */}
+              <div className="flex flex-col items-center text-center p-4 bg-slate-50 dark:bg-brand-950/20 rounded-2xl border border-slate-100 dark:border-brand-900/10 h-full justify-between">
+                <div>
+                  <span className="text-[10px] bg-green-100 dark:bg-green-950/40 text-green-700 dark:text-green-300 font-bold px-2 py-0.5 rounded uppercase tracking-wider">
+                    Scan Here to Pay
+                  </span>
+                  <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 leading-normal">UPI Transfer (BHIM/GPay)</p>
+                </div>
+                <div 
+                  onClick={() => setActiveModalQr('payment')}
+                  className="p-2.5 bg-white rounded-xl shadow-inner border border-slate-200/60 dark:border-brand-900/20 my-4 flex items-center justify-center cursor-zoom-in hover:scale-[1.03] transition-transform active:scale-[0.97]"
+                  title="Click to view full screen"
+                >
+                  {conferenceData.bankDetails.upiQrImage ? (
+                    <img
+                      src={conferenceData.bankDetails.upiQrImage}
+                      alt="UPI QR Code"
+                      className="w-[140px] h-[140px] object-contain rounded-lg"
+                    />
+                  ) : (
+                    <QRCodeCanvas
+                      value={upiPayUrl}
+                      size={140}
+                      bgColor={"#ffffff"}
+                      fgColor={"#047857"}
+                      level={"H"}
+                      includeMargin={true}
+                    />
+                  )}
+                </div>
+                <span className="text-[10px] text-green-700 dark:text-green-400 font-bold bg-green-50 dark:bg-green-950/40 px-2 py-1 rounded">
+                  UPI ID: {conferenceData.bankDetails.upiId}
+                </span>
+              </div>
+
             </div>
 
             {/* Bank details bar at the bottom */}
-            <div className="sm:col-span-2 pt-4 border-t border-slate-100 space-y-2">
-              <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Bank Account Transfer Details</h4>
-              <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-2">
+              <h4 className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest text-center">Bank Account Transfer Details</h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs bg-slate-50 dark:bg-brand-950/15 p-4 rounded-xl border border-slate-100 dark:border-brand-900/10">
                 <div>
-                  <span className="text-slate-400 block text-[9px] uppercase font-semibold">Account Name</span>
-                  <strong className="text-slate-800 font-semibold">{conferenceData.bankDetails.accountName}</strong>
+                  <span className="text-slate-500 dark:text-slate-400 block text-[9px] uppercase font-bold tracking-wider">Account Name</span>
+                  <strong className="text-slate-800 dark:text-slate-200 font-semibold">{conferenceData.bankDetails.accountName}</strong>
                 </div>
                 <div>
-                  <span className="text-slate-400 block text-[9px] uppercase font-semibold">Bank Name</span>
-                  <strong className="text-slate-800 font-semibold">{conferenceData.bankDetails.bankName}</strong>
+                  <span className="text-slate-500 dark:text-slate-400 block text-[9px] uppercase font-bold tracking-wider">Bank Name</span>
+                  <strong className="text-slate-800 dark:text-slate-200 font-semibold">{conferenceData.bankDetails.bankName}</strong>
                 </div>
-                <div className="pt-1.5">
-                  <span className="text-slate-400 block text-[9px] uppercase font-semibold">Account Number</span>
-                  <strong className="text-slate-800 font-semibold select-all">{conferenceData.bankDetails.accountNumber}</strong>
+                <div className="pt-1.5 border-t sm:border-t-0 sm:border-r border-slate-200/50 dark:border-slate-800 flex justify-between items-center sm:pr-4">
+                  <div>
+                    <span className="text-slate-500 dark:text-slate-400 block text-[9px] uppercase font-bold tracking-wider">Account Number</span>
+                    <strong className="text-slate-900 dark:text-white font-black select-all">{conferenceData.bankDetails.accountNumber}</strong>
+                  </div>
+                  <button
+                    onClick={() => handleCopy(conferenceData.bankDetails.accountNumber, 'acc')}
+                    className="p-1 text-slate-400 dark:text-slate-500 hover:text-slate-650 dark:hover:text-white flex items-center gap-1 text-[10px] cursor-pointer"
+                  >
+                    <FiCopy size={12} /> {copiedField === 'acc' ? 'Copied' : 'Copy'}
+                  </button>
                 </div>
-                <div className="pt-1.5">
-                  <span className="text-slate-400 block text-[9px] uppercase font-semibold">IFSC Code</span>
-                  <strong className="text-slate-800 font-semibold select-all">{conferenceData.bankDetails.ifscCode}</strong>
+                <div className="pt-1.5 border-t sm:border-t-0 flex justify-between items-center sm:pl-4">
+                  <div>
+                    <span className="text-slate-500 dark:text-slate-400 block text-[9px] uppercase font-bold tracking-wider">IFSC Code</span>
+                    <strong className="text-slate-900 dark:text-white font-black select-all">{conferenceData.bankDetails.ifscCode}</strong>
+                  </div>
+                  <button
+                    onClick={() => handleCopy(conferenceData.bankDetails.ifscCode, 'ifsc')}
+                    className="p-1 text-slate-400 dark:text-slate-500 hover:text-slate-650 dark:hover:text-white flex items-center gap-1 text-[10px] cursor-pointer"
+                  >
+                    <FiCopy size={12} /> {copiedField === 'ifsc' ? 'Copied' : 'Copy'}
+                  </button>
                 </div>
               </div>
             </div>
@@ -365,46 +568,50 @@ export default function Home() {
       </section>
 
       {/* ==================================================
-          5. FAQS & DIRECTIONS MAPS
+          5. FAQS & VENUE DIRECTIONS MAP
           ================================================== */}
-      <section id="faq" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 border-t border-slate-200/60 mt-10">
+      <section id="faq" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 border-t border-slate-200/60 dark:border-slate-800 mt-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-6xl mx-auto">
           
           {/* MAP */}
           <div className="lg:col-span-6 space-y-4">
-            <h3 className="font-display font-bold text-lg text-slate-800 uppercase tracking-tight">
+            <h3 className="font-display font-bold text-lg text-slate-800 dark:text-white uppercase tracking-tight">
               Venue Location & Directions
             </h3>
-            <div className="rounded-2xl overflow-hidden border border-slate-200 h-[280px] shadow-sm">
+            <div className="rounded-2xl overflow-hidden border border-slate-200 dark:border-darkbg-border h-[320px] shadow-sm relative">
               <iframe
                 src={conferenceData.venue.googleMapsEmbed}
                 className="w-full h-full border-none"
                 allowFullScreen=""
                 loading="lazy"
                 referrerPolicy="no-referrer-when-downgrade"
-                title="Hotel Ramada Jamshedpur Map"
+                title="The Royal Retreat Ranchi Map"
               />
             </div>
+            <p className="text-[11px] text-slate-550 dark:text-slate-400 leading-normal flex items-start gap-1">
+              <FiMapPin className="shrink-0 mt-0.5" />
+              Address: {conferenceData.venue.address}
+            </p>
           </div>
 
           {/* FAQs */}
           <div className="lg:col-span-6 space-y-4">
-            <h3 className="font-display font-bold text-lg text-slate-800 uppercase tracking-tight">
-              Registration FAQ
+            <h3 className="font-display font-bold text-lg text-slate-800 dark:text-white uppercase tracking-tight">
+              Frequently Asked Questions
             </h3>
             
             <div className="space-y-3">
-              {conferenceData.faqs.slice(0, 3).map((faq, idx) => (
+              {conferenceData.faqs.map((faq, idx) => (
                 <div 
                   key={idx}
-                  className="rounded-xl border border-slate-200 bg-white overflow-hidden"
+                  className="rounded-xl border border-slate-200 dark:border-darkbg-border bg-white dark:bg-darkbg-card overflow-hidden"
                 >
                   <button
                     onClick={() => setActiveFaq(activeFaq === idx ? null : idx)}
-                    className="w-full flex items-center justify-between p-4 text-left font-bold text-xs sm:text-sm text-slate-700 focus:outline-none cursor-pointer"
+                    className="w-full flex items-center justify-between p-4 text-left font-bold text-xs sm:text-sm text-slate-700 dark:text-slate-200 focus:outline-none cursor-pointer"
                   >
                     <span>{faq.q}</span>
-                    <span className="text-indigo-600 font-bold ml-2">
+                    <span className="text-brand-600 dark:text-accent-400 font-bold ml-2">
                       {activeFaq === idx ? "−" : "+"}
                     </span>
                   </button>
@@ -414,9 +621,9 @@ export default function Home() {
                         initial={{ height: 0, opacity: 0 }}
                         animate={{ height: 'auto', opacity: 1 }}
                         exit={{ height: 0, opacity: 0 }}
-                        className="border-t border-slate-100"
+                        className="border-t border-slate-100 dark:border-darkbg-border"
                       >
-                        <p className="p-4 text-xs text-slate-500 leading-relaxed bg-slate-50/50">
+                        <p className="p-4 text-xs text-slate-600 dark:text-slate-400 leading-relaxed bg-slate-50/50 dark:bg-brand-950/10">
                           {faq.a}
                         </p>
                       </motion.div>
@@ -446,9 +653,9 @@ export default function Home() {
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
-              className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-slate-100 flex flex-col items-center space-y-4 cursor-default"
+              className="bg-white dark:bg-darkbg-card rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl border border-slate-100 dark:border-darkbg-border flex flex-col items-center space-y-4 cursor-default"
             >
-              <div className="w-full flex items-center justify-between border-b border-slate-100 pb-3">
+              <div className="w-full flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                 <span className={`text-[10px] font-bold px-3 py-1 rounded-md uppercase tracking-wider ${
                   activeModalQr === 'register' ? 'bg-indigo-100 text-indigo-700' : 'bg-green-100 text-green-700'
                 }`}>
@@ -456,7 +663,7 @@ export default function Home() {
                 </span>
                 <button
                   onClick={() => setActiveModalQr(null)}
-                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center font-bold text-sm transition-colors cursor-pointer border-none"
+                  className="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 dark:bg-brand-950/40 dark:hover:bg-brand-900/40 text-slate-500 hover:text-slate-800 dark:text-slate-350 dark:hover:text-white flex items-center justify-center font-bold text-sm transition-colors cursor-pointer border-none"
                   title="Close"
                 >
                   ✕
@@ -482,7 +689,7 @@ export default function Home() {
                 )}
               </div>
 
-              <p className="text-[11px] text-slate-500 text-center leading-relaxed">
+              <p className="text-[11px] text-slate-500 dark:text-slate-400 text-center leading-relaxed">
                 {activeModalQr === 'register' 
                   ? 'Scan with your smartphone camera to open the Google Registration Form.' 
                   : 'Scan with GPay, PhonePe, Paytm, BHIM, or any UPI app to complete your transaction.'

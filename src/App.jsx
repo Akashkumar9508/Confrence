@@ -5,6 +5,7 @@ import Footer from './components/Footer';
 import WhatsAppButton from './components/WhatsAppButton';
 import ScrollToTop from './components/ScrollToTop';
 import Home from './pages/Home';
+import { conferenceData } from './data/conferenceData';
 
 export default function App() {
   return (
@@ -30,7 +31,10 @@ export default function App() {
         <Footer />
 
         {/* Floating Support Button */}
-        <WhatsAppButton />
+        <WhatsAppButton 
+          phoneNumber={`+91${conferenceData.contactNumber}`}
+          message={`Hi! I am interested in the 3rd East Zone Paediatric Rheumatology Conference (EZPRC 2026).`}
+        />
       </div>
     </Router>
   );
